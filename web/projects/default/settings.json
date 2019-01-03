@@ -1,0 +1,10 @@
+{
+	"board": 
+	{
+		"BoardModel":"esp8266com:esp8266:generic",
+		"xtal": "80",
+		"FlashFreq": "40",
+		"FlashMode": "dio",
+		"eesz": "1M256"
+	}
+}

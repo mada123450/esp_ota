@@ -1,0 +1,263 @@
+<!doctype html>
+
+<head>
+  <title>ESP OTA</title>
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+  <link rel="stylesheet" href="lib/codemirror.css" />
+  <!-- <link rel="stylesheet" href="theme/night.css"> -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+
+  <script src="lib/codemirror.js"></script>
+  <script src="addon/edit/matchbrackets.js"></script>
+  <link rel="stylesheet" href="addon/hint/show-hint.css">
+  <script src="addon/hint/show-hint.js"></script>
+  <script src="mode/clike/clike.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">ESP OTA Programmer</a>
+
+    <!--<a class="nav-link" href="#" id="fileName">* </a>-->
+    <a class="nav-link" href="#" onclick="Save()">Save </a>
+    <a class="nav-link" href="#" onclick="Build()">Build </a>
+    <a class="nav-link" href="#" onclick="Deploy()">Deploy </a>
+    <div class="w-100"></div>
+
+  <!-- - <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">  -->
+  </nav>
+
+  <!-- Sidebar -->
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="NewProject()">
+                <span data-feather="file"></span>
+                New
+              </a>
+            </li>
+          </ul>
+
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            Existing Projects
+          </h6>
+
+          <ul class="nav flex-column" id="projects">
+            
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <!-- Main-->
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2" id="fileName">Code</h1>
+
+      </div>
+
+      <div><textarea id="cpp-code">
+
+          //TEST CODE
+
+      </textarea></div>
+    </main>
+
+    </div>
+
+    <script>
+      var cppEditor = CodeMirror.fromTextArea(document.getElementById("cpp-code"), {
+        lineNumbers: true,
+        matchBrackets: true,
+        
+        mode: "text/x-c++src",
+        indentUnit: 4,
+        smartIndent: true,
+        indentWithTabs: true
+       // mode : "application/ld+json"
+      });
+      
+      var currentFile = "";
+
+      LoadFile("default/default.ino");
+      ReloadFiles();
+
+      function NewProject() 
+      {
+        var projectName = prompt("Project Name", "");
+        CreateProject(projectName);
+      }
+
+      function CreateProject(projectName)
+      {
+        var request = $.ajax({
+          url: "createProject.php",
+          method: "POST",
+          data: { projectName: projectName },
+          dataType: "html"
+        });
+
+        request.done(function (msg) 
+        {
+          $( "#log" ).html( msg );
+          ReloadFiles();
+        });
+
+        request.fail(function (jqXHR, textStatus) 
+        {
+          alert("Request failed: " + textStatus);
+        });
+      }
+
+      function Deploy()
+      {
+        Build();
+        var request = $.ajax({
+          async: false,
+          url: "deploy.php",
+          method: "POST",
+          data: { fileName: currentFile },
+          dataType: "html"
+        });
+
+        request.done(function (msg) {
+          $( "#log" ).html( msg );
+          //ReloadFiles();
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+          alert("Request failed: " + textStatus);
+        });
+      }
+
+      function Build()
+      {
+        Save();
+        var request = $.ajax({
+          async: false,
+          url: "build.php",
+          method: "POST",
+          data: { fileName: currentFile },
+          dataType: "html"
+        });
+
+        request.done(function (msg) {
+          $( "#log" ).html( msg );
+          //ReloadFiles();
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+          alert("Request failed: " + textStatus);
+        });
+      }
+
+      function Save()
+      {
+        var request = $.ajax({
+          async: false,
+          url: "saveFile.php",
+          method: "POST",
+          data: { fileName: currentFile, content: cppEditor.getValue() },
+          dataType: "html"
+        });
+
+        request.done(function (msg) {
+          $( "#log" ).html( msg );
+          ReloadFiles();
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+          alert("Request failed: " + textStatus);
+        });
+      }
+
+      function GetExtension(fileName)
+      {
+        return fileName.split('.').pop();
+      }
+
+      function LoadFile(fileName)
+      {
+        var request = $.ajax(
+          {
+            url: "projects/"+fileName+"?timestamp=" + Date.now(),
+            method : "GET"
+          }
+        )
+        request.done(function (msg) {
+          currentFile = fileName;
+          document.getElementById("fileName").innerHTML = fileName;
+
+          $( "#log" ).html( msg );
+          //alert(msg.responseText);
+          if(GetExtension(fileName) == "json")
+          {
+            cppEditor.matchBrackets = true;
+            cppEditor.autoCloseBrackets = true;
+            cppEditor.mode = "application/ld+json";
+            cppEditor.setValue(JSON.stringify(msg, null, '\t'));
+
+            //var totalLines = cppEditor.lineCount();  
+            //cppEditor.autoFormatRange({line:0, ch:0}, {line:totalLines});
+
+          }
+          else
+          {
+            cppEditor.mode = "text/x-c++src";
+            cppEditor.setValue(msg);
+          }
+
+        });
+         
+        request.fail(function (jqXHR, textStatus) {
+          alert("Request failed: " + textStatus);
+        });
+      }
+
+      function ReloadFiles()
+      {
+        //alert("a");
+        var request = $.ajax(
+          {
+            url: "projects.php",
+            method : "GET"
+          }
+        )
+        request.done(function (msg) {
+          $( "#log" ).html( msg );
+          
+          var projects = JSON.parse(msg);
+          var projectList = "";
+          for (i in projects) 
+          {
+            projectList += "<h7 class=\"sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted\">";
+            projectList += projects[i];
+            projectList += "</h7>";
+
+            projectList += "<li class=\"nav-item\"><a class=\"nav-link\" href=\"#\" OnClick=(LoadFile('"+projects[i] + "/" + projects[i]+".ino'))>"+projects[i]+".ino</a></li>";
+            projectList += "<li class=\"nav-item\"><a class=\"nav-link\" href=\"#\" OnClick=(LoadFile('"+projects[i] + "/settings.json'))>settings.json</a></li>";
+          }
+          //alert(projectList);
+          document.getElementById("projects").innerHTML = projectList; 
+        });
+         
+        request.fail(function (jqXHR, textStatus) {
+          alert("Request failed: " + textStatus);
+        });
+      }
+    </script>
+</body>
