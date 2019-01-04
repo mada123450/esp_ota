@@ -11,7 +11,7 @@ if(!isset($_POST["submit"]))
 </head>
 <body>
 
-<form action="importProjects.php" method="post" enctype="multipart/form-data">
+<form action="#" method="post" enctype="multipart/form-data">
     Select projects.zip upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
     <input type="submit" value="Upload Projects" name="submit">
