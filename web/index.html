@@ -52,6 +52,9 @@
             <li class="nav-item">
               <a class="nav-link" href="exportProjects.php"><span data-feather="file"></span>Export</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="UpdateFromGitHub()"><span data-feather="file"></span>Update_Web_from_GitHub</a>
+              </li>
           </ul>
 
 
@@ -103,6 +106,28 @@
       {
         var projectName = prompt("Project Name", "");
         CreateProject(projectName);
+      }
+
+      function UpdateFromGitHub(projectName)
+      {
+        if(!confirm("Update Programmer web interface from GitHub?"))
+          return;
+        var request = $.ajax({
+          url: "updateFromGitHub.php",
+          method: "POST",
+          dataType: "html"
+        });
+
+        request.done(function (msg) 
+        {
+          $( "#log" ).html( msg );
+          location.reload();
+        });
+
+        request.fail(function (jqXHR, textStatus) 
+        {
+          alert("Request failed: " + textStatus);
+        });
       }
 
       function CreateProject(projectName)
