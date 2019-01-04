@@ -33,15 +33,15 @@ else
     {
         shell_exec("unzip -o \"".$target_file."\" -d /var/www/html");
 ?>
-        <!DOCTYPE html>
-        <html>
-            <body>
-                <h1>OK</h1>
-                <script>
-                    close();
-                </script>
-            </body>
-        </html>
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>OK</h1>
+        <script>
+            close();
+        </script>
+    </body>
+</html>
 <?php
         unlink($target_file);
     }
