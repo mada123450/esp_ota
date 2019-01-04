@@ -11,7 +11,7 @@ if(!isset($_POST["submit"]))
 </head>
 <body>
 
-<form action="#" method="post" enctype="multipart/form-data">
+<form action="importProjects.php?timestamp=<?php echo time(); ?>" method="post" enctype="multipart/form-data">
     Select projects.zip upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
     <input type="submit" value="Upload Projects" name="submit">
