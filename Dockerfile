@@ -53,6 +53,6 @@ RUN python get.py
 RUN chown root: /var/www
 
 RUN chown www-data: --recursive /var/www/html
-RUN chown www-data: /tmp
+RUN chown www-data: --recursive /tmp
 
 WORKDIR /var/www/html
