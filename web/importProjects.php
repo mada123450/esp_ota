@@ -4,9 +4,14 @@ if(!isset($_POST["submit"]))
 ?>
 <!DOCTYPE html>
 <html>
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+</head>
 <body>
 
-<form action="#" method="post" enctype="multipart/form-data">
+<form action="importProjects.php" method="post" enctype="multipart/form-data">
     Select projects.zip upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
     <input type="submit" value="Upload Projects" name="submit">
@@ -35,6 +40,11 @@ else
 ?>
 <!DOCTYPE html>
 <html>
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+</head>
     <body>
         <h1>OK</h1>
         <script>
