@@ -1,5 +1,5 @@
 <?php
-if(!is_dir("./projects/".dirname($_POST['fileName'])."/deploy")
+if(!is_dir("./projects/".dirname($_POST['fileName'])."/deploy"))
 {
 	mkdir("./projects/".dirname($_POST['fileName'])."/deploy");        
 }
