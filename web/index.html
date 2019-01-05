@@ -47,7 +47,7 @@
               <a class="nav-link" href="#" onclick="NewProject()"><span data-feather="file"></span>New</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#" onclick="InstallLibrary()"><span data-feather="file"></span>Install_Library</a>
+              <a class="nav-link" href="#" onclick="InstallLibraryPrompt()"><span data-feather="file"></span>Install_Library</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="importProjects.php" target="_blank"><span data-feather="file"></span>Import</a>
@@ -111,7 +111,7 @@
         CreateProject(projectName);
       }
 
-      function InstallLibrary()
+      function InstallLibraryPrompt()
       {
         var libraryName = prompt("Library Name", "");
         InstallLibrary(libraryName);
