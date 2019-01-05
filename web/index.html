@@ -47,6 +47,9 @@
               <a class="nav-link" href="#" onclick="NewProject()"><span data-feather="file"></span>New</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="#" onclick="InstallLibrary()"><span data-feather="file"></span>Install_Library</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="importProjects.php" target="_blank"><span data-feather="file"></span>Import</a>
             </li>
             <li class="nav-item">
@@ -106,6 +109,33 @@
       {
         var projectName = prompt("Project Name", "");
         CreateProject(projectName);
+      }
+
+      function InstallLibrary()
+      {
+        var libraryName = prompt("Library Name", "");
+        InstallLibrary(libraryName);
+      }
+
+      function InstallLibrary(libraryName)
+      {
+        var request = $.ajax({
+          url: "installLibrary.php",
+          method: "POST",
+          data: { libraryName: libraryName },
+          dataType: "html"
+        });
+
+        request.done(function (msg) 
+        {
+          $( "#log" ).html( msg );
+          alert(msg);
+        });
+
+        request.fail(function (jqXHR, textStatus) 
+        {
+          alert("Request failed: " + textStatus);
+        });
       }
 
       function UpdateFromGitHub(projectName)
