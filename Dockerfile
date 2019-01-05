@@ -12,7 +12,7 @@ RUN apt-get update && \
         libc6-i386 \
         python \
         sudo \
-        zip && \
+        zip \
         unzip && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
